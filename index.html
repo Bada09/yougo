@@ -1,0 +1,2206 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LAVAÍ — Repasse You Go Vila Mariana (34#)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/pt.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+
+<style>
+:root {
+  --bg-body: #f1f5f9;
+  --bg-card: #ffffff;
+  --bg-card-hover: #f8fafc;
+  --bg-card-solid: #ffffff;
+  --bg-input: #f8fafc;
+  --border: #e2e8f0;
+  --border-focus: rgba(99, 102, 241, 0.5);
+  --text-main: #0f172a;
+  --text-muted: #64748b;
+  --text-dim: #94a3b8;
+  
+  --primary: #6366f1;
+  --primary-glow: rgba(99, 102, 241, 0.35);
+  --secondary: #0ea5e9;
+  --secondary-glow: rgba(14, 165, 233, 0.35);
+  --accent-repasse: #10b981;
+  --accent-repasse-glow: rgba(16, 185, 129, 0.35);
+  --warning: #f59e0b;
+  --danger: #ef4444;
+  --wash-color: #3b82f6;
+  --dry-color: #ec4899;
+  
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --shadow-sm: 0 2px 10px rgba(15, 23, 42, 0.07);
+  --shadow-glow: 0 8px 32px rgba(15, 23, 42, 0.12);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+body {
+  background-color: var(--bg-body);
+  color: var(--text-main);
+  min-height: 100vh;
+  padding: 24px;
+  background-image: 
+    radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.07) 0px, transparent 50%),
+    radial-gradient(at 100% 0%, rgba(16, 185, 129, 0.06) 0px, transparent 50%),
+    radial-gradient(at 50% 100%, rgba(14, 165, 233, 0.05) 0px, transparent 50%);
+  background-attachment: fixed;
+}
+
+.container {
+  max-width: 1540px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* ── LOADER ── */
+.loader-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(241, 245, 249, 0.92);
+  backdrop-filter: blur(12px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  transition: opacity 0.4s ease, visibility 0.4s ease;
+}
+.loader-overlay.hidden {
+  opacity: 0;
+  visibility: hidden;
+}
+.loader-spinner {
+  width: 58px;
+  height: 58px;
+  border: 4px solid rgba(99, 102, 241, 0.15);
+  border-top-color: var(--primary);
+  border-right-color: var(--accent-repasse);
+  border-radius: 50%;
+  animation: spin 0.9s linear infinite;
+  box-shadow: 0 0 25px var(--primary-glow);
+}
+.loader-text {
+  margin-top: 18px;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-muted);
+  letter-spacing: 0.5px;
+}
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ── HEADER ── */
+.header-card {
+  background: var(--bg-card);
+  backdrop-filter: blur(16px);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 22px 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  box-shadow: var(--shadow-sm);
+  position: relative;
+  overflow: hidden;
+}
+.header-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--primary), var(--secondary), var(--accent-repasse));
+}
+.brand-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+.brand-icon {
+  width: 52px;
+  height: 52px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, var(--primary), #4338ca);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  color: #fff;
+  box-shadow: 0 6px 18px var(--primary-glow);
+}
+.brand-text h1 {
+  font-family: 'Outfit', sans-serif;
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.brand-tag {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 9px;
+  border-radius: 20px;
+  background: rgba(16, 185, 129, 0.15);
+  color: #059669;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.brand-subtitle {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-top: 4px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.badge-fixed-rate {
+  background: rgba(99, 102, 241, 0.15);
+  color: #4f46e5;
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 12px;
+}
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.btn-nav {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px;
+  border-radius: var(--radius-sm);
+  background: rgba(15, 23, 42, 0.05);
+  border: 1px solid var(--border);
+  color: var(--text-main);
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+.btn-nav:hover {
+  background: rgba(15, 23, 42, 0.1);
+  border-color: rgba(15, 23, 42, 0.2);
+  transform: translateY(-1px);
+}
+.btn-export-excel {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  border-radius: var(--radius-sm);
+  background: linear-gradient(135deg, #059669, #10b981);
+  border: none;
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(16, 185, 129, 0.35);
+  transition: all 0.2s ease;
+}
+.btn-export-excel:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(16, 185, 129, 0.5);
+  filter: brightness(1.08);
+}
+.btn-export-excel:active {
+  transform: translateY(0);
+}
+
+/* ── FILTERS CARD ── */
+.filters-card {
+  background: var(--bg-card);
+  backdrop-filter: blur(16px);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 18px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  box-shadow: var(--shadow-sm);
+}
+.filters-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 14px;
+}
+.filter-item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+  min-width: 160px;
+}
+.filter-item label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.filter-input, .filter-select {
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 10px 14px;
+  color: var(--text-main);
+  font-size: 13px;
+  outline: none;
+  transition: all 0.2s ease;
+  width: 100%;
+}
+.filter-input:focus, .filter-select:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primary-glow);
+}
+.quick-period-pills {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.btn-pill {
+  background: rgba(15, 23, 42, 0.04);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 6px 14px;
+  color: var(--text-muted);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+.btn-pill:hover {
+  background: rgba(15, 23, 42, 0.08);
+  color: var(--text-main);
+}
+.btn-pill.active {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: #fff;
+  box-shadow: 0 2px 10px var(--primary-glow);
+}
+
+/* ── KPI SECTION ── */
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 18px;
+}
+.kpi-card {
+  background: var(--bg-card);
+  backdrop-filter: blur(16px);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 20px 22px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 14px;
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+.kpi-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(15, 23, 42, 0.18);
+}
+.kpi-card.highlight-repasse {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.12), rgba(6, 78, 59, 0.3));
+  border: 1px solid rgba(16, 185, 129, 0.35);
+  box-shadow: 0 8px 24px rgba(16, 185, 129, 0.15);
+}
+.kpi-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.kpi-title {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: var(--text-muted);
+}
+.kpi-icon-box {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background: rgba(15, 23, 42, 0.05);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  color: var(--text-muted);
+}
+.kpi-card.highlight-repasse .kpi-icon-box {
+  background: rgba(16, 185, 129, 0.2);
+  color: #059669;
+}
+.kpi-value {
+  font-family: 'Outfit', sans-serif;
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  color: var(--text-main);
+}
+.kpi-card.highlight-repasse .kpi-value {
+  color: #059669;
+  text-shadow: 0 0 20px rgba(52, 211, 153, 0.3);
+}
+.kpi-footer {
+  font-size: 12px;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* ── CONDOMINIUM SUMMARY BOXES ── */
+.condo-comparison-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+  gap: 20px;
+}
+.condo-box {
+  background: var(--bg-card);
+  backdrop-filter: blur(16px);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  position: relative;
+  overflow: hidden;
+}
+.condo-box.yougo {
+  border-left: 4px solid var(--primary);
+}
+.condo-box.puq {
+  border-left: 4px solid var(--secondary);
+}
+.condo-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.condo-title-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.condo-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  font-weight: 800;
+}
+.condo-box.yougo .condo-avatar {
+  background: rgba(99, 102, 241, 0.2);
+  color: #4f46e5;
+}
+.condo-box.puq .condo-avatar {
+  background: rgba(14, 165, 233, 0.2);
+  color: #38bdf8;
+}
+.condo-title {
+  font-size: 17px;
+  font-weight: 700;
+  font-family: 'Outfit', sans-serif;
+}
+.condo-loc {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+.condo-stats-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  background: #f8fafc;
+  border-radius: var(--radius-sm);
+  padding: 14px;
+}
+.condo-stat-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.condo-stat-lbl {
+  font-size: 11px;
+  color: var(--text-dim);
+  font-weight: 600;
+  text-transform: uppercase;
+}
+.condo-stat-val {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-main);
+  font-family: 'Outfit', sans-serif;
+}
+.condo-repasse-val {
+  color: #059669;
+}
+.condo-cycles-bar {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.progress-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+.progress-bar-wrap {
+  height: 8px;
+  background: rgba(15, 23, 42, 0.08);
+  border-radius: 4px;
+  overflow: hidden;
+  display: flex;
+}
+.progress-fill-wash {
+  background: var(--wash-color);
+  height: 100%;
+}
+.progress-fill-dry {
+  background: var(--dry-color);
+  height: 100%;
+}
+
+/* ── CHARTS SECTION ── */
+.charts-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 20px;
+}
+@media (max-width: 1080px) {
+  .charts-grid { grid-template-columns: 1fr; }
+}
+.chart-card {
+  background: var(--bg-card);
+  backdrop-filter: blur(16px);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  box-shadow: var(--shadow-sm);
+}
+.chart-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.chart-title {
+  font-size: 16px;
+  font-weight: 700;
+  font-family: 'Outfit', sans-serif;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* ── ANALYTIC TABLE SECTION ── */
+.table-card {
+  background: var(--bg-card);
+  backdrop-filter: blur(16px);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 22px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  box-shadow: var(--shadow-sm);
+}
+.table-top-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 14px;
+}
+.table-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.table-title {
+  font-size: 18px;
+  font-weight: 700;
+  font-family: 'Outfit', sans-serif;
+}
+.table-count-badge {
+  background: rgba(99, 102, 241, 0.15);
+  color: #4f46e5;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 12px;
+}
+.table-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.search-input-wrap {
+  position: relative;
+  min-width: 260px;
+}
+.search-input-wrap i {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-dim);
+  font-size: 13px;
+}
+.search-input {
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 8px 14px 8px 34px;
+  color: var(--text-main);
+  font-size: 13px;
+  width: 100%;
+  outline: none;
+  transition: all 0.2s ease;
+}
+.search-input:focus {
+  border-color: var(--primary);
+}
+
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+}
+.custom-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 13px;
+}
+.custom-table th {
+  background: #f1f5f9;
+  color: var(--text-muted);
+  font-weight: 700;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  padding: 13px 16px;
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+}
+.custom-table td {
+  padding: 13px 16px;
+  border-bottom: 1px solid rgba(15, 23, 42, 0.04);
+  color: var(--text-main);
+  white-space: nowrap;
+}
+.custom-table tr:hover td {
+  background: rgba(15, 23, 42, 0.03);
+}
+
+/* Badges */
+.badge-machine {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 700;
+}
+.badge-wash {
+  background: rgba(59, 130, 246, 0.15);
+  color: #2563eb;
+  border: 1px solid rgba(59, 130, 246, 0.3);
+}
+.badge-dry {
+  background: rgba(236, 72, 153, 0.15);
+  color: #db2777;
+  border: 1px solid rgba(236, 72, 153, 0.3);
+}
+.badge-condo {
+  font-weight: 600;
+  font-size: 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+.badge-condo.yougo { color: #4f46e5; }
+.badge-condo.puq { color: #38bdf8; }
+
+.badge-repasse-val {
+  background: rgba(16, 185, 129, 0.15);
+  color: #059669;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-family: 'JetBrains Mono', monospace;
+}
+.cell-morador {
+  font-weight: 600;
+  color: #0f172a;
+}
+.cell-apto {
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 700;
+  color: #b45309;
+  background: rgba(245, 158, 11, 0.14);
+  padding: 2px 8px;
+  border-radius: 4px;
+  display: inline-block;
+}
+
+/* ── PAGINATION ── */
+.table-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding-top: 4px;
+}
+.pagination-info {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+.pagination-controls {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.btn-page {
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  color: var(--text-main);
+  min-width: 34px;
+  height: 34px;
+  padding: 0 10px;
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+.btn-page:hover:not(:disabled) {
+  background: rgba(15, 23, 42, 0.1);
+  border-color: rgba(15, 23, 42, 0.2);
+}
+.btn-page.active {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: #fff;
+}
+.btn-page:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* ── CONSOLIDATED TABLE ── */
+.consolidated-table-wrap {
+  margin-top: 6px;
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 768px) {
+  body { padding: 14px; }
+  .header-card { flex-direction: column; align-items: flex-start; }
+  .header-actions { width: 100%; justify-content: space-between; }
+  .filters-row { flex-direction: column; }
+  .filter-item { width: 100%; }
+}
+/* ── TELA DE ACESSO ── */
+body.locked{overflow:hidden}
+body.locked .container,body.locked #loader{display:none}
+.gate{position:fixed;inset:0;z-index:10000;display:flex;align-items:center;justify-content:center;padding:24px;
+  background:#f4f7fb;
+  background-image:radial-gradient(at 10% 10%,rgba(14,165,233,.16) 0,transparent 50%),radial-gradient(at 90% 15%,rgba(16,185,129,.12) 0,transparent 50%),radial-gradient(at 50% 100%,rgba(99,102,241,.10) 0,transparent 55%)}
+.gate.hide{opacity:0;visibility:hidden;transition:opacity .45s ease,visibility .45s ease}
+.gate-card{width:100%;max-width:440px;background:#fff;border:1px solid #e2e8f0;border-radius:24px;padding:40px 36px 30px;
+  box-shadow:0 20px 50px rgba(15,23,42,.10);position:relative;overflow:hidden;text-align:center}
+.gate-card::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,#0ea5e9,#6366f1,#10b981)}
+.gate-logo{width:68px;height:68px;margin:0 auto 18px;border-radius:20px;background:linear-gradient(135deg,#38bdf8,#0284c7);
+  display:flex;align-items:center;justify-content:center;color:#fff;font-size:30px;box-shadow:0 10px 24px rgba(14,165,233,.30)}
+.gate-brand{font-family:'Outfit',sans-serif;font-weight:800;letter-spacing:3px;font-size:13px;color:#0284c7;margin-bottom:10px}
+.gate-title{font-family:'Outfit',sans-serif;font-size:26px;font-weight:700;color:#0f172a;line-height:1.2;letter-spacing:-.4px}
+.gate-sub{margin-top:8px;font-size:14px;color:#64748b}
+.gate-condo{display:inline-flex;align-items:center;gap:8px;margin-top:16px;padding:6px 14px;border-radius:20px;
+  background:rgba(14,165,233,.10);color:#0369a1;font-weight:700;font-size:13px;border:1px solid rgba(14,165,233,.25)}
+.gate-form{margin-top:26px;text-align:left}
+.gate-form label{display:block;font-size:12px;font-weight:700;color:#475569;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px}
+.gate-input-wrap{position:relative}
+.gate-input-wrap .ic{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:#94a3b8}
+.gate-input{width:100%;padding:14px 46px 14px 40px;border:1.5px solid #e2e8f0;border-radius:12px;font-size:15px;color:#0f172a;background:#fff;outline:none;transition:border-color .15s,box-shadow .15s}
+.gate-input:focus{border-color:#0ea5e9;box-shadow:0 0 0 4px rgba(14,165,233,.15)}
+.gate-input.err{border-color:#dc2626;box-shadow:0 0 0 4px rgba(220,38,38,.12)}
+.gate-eye{position:absolute;right:8px;top:50%;transform:translateY(-50%);border:0;background:transparent;color:#94a3b8;cursor:pointer;padding:8px;border-radius:8px}
+.gate-eye:hover{color:#0369a1}
+.gate-btn{width:100%;margin-top:16px;padding:14px;border:0;border-radius:12px;background:linear-gradient(135deg,#0ea5e9,#0284c7);
+  color:#fff;font-weight:700;font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;box-shadow:0 8px 20px rgba(14,165,233,.30);transition:transform .1s,box-shadow .15s}
+.gate-btn:hover{box-shadow:0 10px 26px rgba(14,165,233,.40)}
+.gate-btn:active{transform:translateY(1px)}
+.gate-msg{min-height:20px;margin-top:12px;font-size:13px;font-weight:600;color:#dc2626;text-align:center}
+.gate-foot{margin-top:18px;padding-top:16px;border-top:1px solid #eef2f7;font-size:12px;color:#94a3b8}
+.shake{animation:shake .4s}
+@keyframes shake{20%,60%{transform:translateX(-8px)}40%,80%{transform:translateX(8px)}}
+@media (max-width:480px){.gate-card{padding:32px 22px 24px}.gate-title{font-size:22px}}
+@media print{.gate{display:none!important}}
+</style>
+</head>
+<body class="locked">
+
+<!-- TELA DE ACESSO -->
+<div class="gate" id="gate">
+  <div class="gate-card" id="gate-card">
+    <div class="gate-logo"><i class="fas fa-building-user"></i></div>
+    <div class="gate-brand">LAVAÍ</div>
+    <div class="gate-title">Bem-vindo ao dashboard<br>do seu condomínio</div>
+    <div class="gate-sub">Acompanhe as lavagens, secagens e o repasse do seu condomínio.</div>
+    <div class="gate-condo"><i class="fas fa-location-dot"></i> You Go Vila Mariana</div>
+    <form class="gate-form" id="gate-form" autocomplete="off">
+      <label for="gate-pass">Senha de acesso</label>
+      <div class="gate-input-wrap">
+        <i class="fas fa-lock ic"></i>
+        <input type="password" id="gate-pass" class="gate-input" placeholder="Digite a senha" autofocus>
+        <button type="button" class="gate-eye" id="gate-eye" aria-label="Mostrar senha"><i class="fas fa-eye"></i></button>
+      </div>
+      <button type="submit" class="gate-btn"><i class="fas fa-arrow-right-to-bracket"></i> Entrar</button>
+      <div class="gate-msg" id="gate-msg"></div>
+    </form>
+    <div class="gate-foot">Dúvidas sobre o acesso? Fale com a administração LAVAÍ.</div>
+  </div>
+</div>
+
+
+
+<!-- LOADER -->
+<div id="loader" class="loader-overlay">
+  <div class="loader-spinner"></div>
+  <div class="loader-text">Processando transações do You Go Vila Mariana...</div>
+</div>
+
+<div class="container">
+
+  <!-- HEADER -->
+  <header class="header-card">
+    <div class="brand-wrapper">
+      <div class="brand-icon">
+        <i class="fas fa-hand-holding-dollar"></i>
+      </div>
+      <div class="brand-text">
+        <h1>
+          Repasse — You Go Vila Mariana
+          <span class="brand-tag">Exclusivo</span>
+        </h1>
+        <div class="brand-subtitle">
+          <span>PDV: <strong>34# Gestão You Go Vila Mariana</strong> • Fontes: PayBlu, VendTEF, VMPay e SQI • Filtro: somente You Go</span>
+          <span class="badge-fixed-rate"><i class="fas fa-coins"></i> R$ 2,00 / operação</span>
+        </div>
+      </div>
+    </div>
+    
+    <div class="header-actions">
+      <a href="dashboard_lavai_tete.html" class="btn-nav">
+        <i class="fas fa-chart-line"></i> Dashboard Geral
+      </a>
+      <button class="btn-export-excel" onclick="exportAnaliticoExcel()">
+        <i class="fas fa-file-excel"></i> Exportar Analítico (Excel)
+      </button>
+    </div>
+  </header>
+
+  <!-- FILTERS -->
+  <section class="filters-card">
+    <div class="filters-row">
+      <!-- Tipo de Máquina -->
+      <div class="filter-item" style="max-width: 220px;">
+        <label><i class="fas fa-soap"></i> Tipo de Máquina</label>
+        <select id="filter-maq-type" class="filter-select" onchange="applyFilters()">
+          <option value="all">Todas as Operações</option>
+          <option value="wash">Apenas Lavadoras</option>
+          <option value="dry">Apenas Secadoras</option>
+        </select>
+      </div>
+
+      <!-- Período Data De/Até -->
+      <div class="filter-item" style="max-width: 170px;">
+        <label><i class="fas fa-calendar-day"></i> De</label>
+        <input type="text" id="date-start" class="filter-input" placeholder="dd/mm/aaaa">
+      </div>
+      <div class="filter-item" style="max-width: 170px;">
+        <label><i class="fas fa-calendar-day"></i> Até</label>
+        <input type="text" id="date-end" class="filter-input" placeholder="dd/mm/aaaa">
+      </div>
+
+      <!-- Botão Limpar Filtros -->
+      <div class="filter-item" style="max-width: 120px; align-self: flex-end;">
+        <button class="btn-nav" style="width: 100%; justify-content: center; padding: 10px;" onclick="resetFilters()">
+          <i class="fas fa-rotate-left"></i> Limpar
+        </button>
+      </div>
+    </div>
+
+    <!-- Quick Period Pills -->
+    <div class="quick-period-pills">
+      <span style="font-size: 11px; font-weight: 700; color: var(--text-dim); text-transform: uppercase; margin-right: 6px;">Atalhos:</span>
+      <button class="btn-pill" data-period="today" onclick="setQuickPeriod('today')">Hoje</button>
+      <button class="btn-pill" data-period="yesterday" onclick="setQuickPeriod('yesterday')">Ontem</button>
+      <button class="btn-pill" data-period="7days" onclick="setQuickPeriod('7days')">Últimos 7 dias</button>
+      <button class="btn-pill" data-period="this_month" onclick="setQuickPeriod('this_month')">Este Mês</button>
+      <button class="btn-pill" data-period="last_month" onclick="setQuickPeriod('last_month')">Mês Passado</button>
+      <button class="btn-pill" data-period="year_2026" onclick="setQuickPeriod('year_2026')">Ano 2026</button>
+      <button class="btn-pill" data-period="year_2025" onclick="setQuickPeriod('year_2025')">Ano 2025</button>
+      <button class="btn-pill active" data-period="all" onclick="setQuickPeriod('all')">Todo o Período</button>
+    </div>
+  </section>
+
+  <!-- KPI CARDS -->
+  <section class="kpi-grid">
+    <!-- Repasse Total -->
+    <div class="kpi-card highlight-repasse">
+      <div class="kpi-header">
+        <span class="kpi-title">Total a Repassar (Condomínio)</span>
+        <div class="kpi-icon-box"><i class="fas fa-hand-holding-dollar"></i></div>
+      </div>
+      <div class="kpi-value" id="kpi-repasse-total">R$ 0,00</div>
+      <div class="kpi-footer">
+        <i class="fas fa-check-circle" style="color: #059669;"></i>
+        <span>Calculado a R$ 2,00 por ciclo</span>
+      </div>
+    </div>
+
+    <!-- Total de Operações -->
+    <div class="kpi-card">
+      <div class="kpi-header">
+        <span class="kpi-title">Total de Operações / Ciclos</span>
+        <div class="kpi-icon-box"><i class="fas fa-rotate"></i></div>
+      </div>
+      <div class="kpi-value" id="kpi-total-operacoes">0</div>
+      <div class="kpi-footer">
+        <i class="fas fa-tag"></i>
+        <span id="kpi-operacoes-sub">Lavagens e Secagens</span>
+      </div>
+    </div>
+
+    <!-- Repasse You Go -->
+    <div class="kpi-card">
+      <div class="kpi-header">
+        <span class="kpi-title">Repasse You Go Vila Mariana</span>
+        <div class="kpi-icon-box" style="color: #4f46e5; background: rgba(99, 102, 241, 0.15);"><i class="fas fa-building"></i></div>
+      </div>
+      <div class="kpi-value" id="kpi-repasse-yougo" style="color: #4f46e5;">R$ 0,00</div>
+      <div class="kpi-footer">
+        <span id="kpi-ops-yougo">0 ciclos</span>
+      </div>
+    </div>
+
+    <!-- Faturamento Bruto -->
+    <div class="kpi-card">
+      <div class="kpi-header">
+        <span class="kpi-title">Faturamento Bruto Total</span>
+        <div class="kpi-icon-box"><i class="fas fa-wallet"></i></div>
+      </div>
+      <div class="kpi-value" id="kpi-faturamento-total">R$ 0,00</div>
+      <div class="kpi-footer">
+        <span id="kpi-pct-repasse">0% de repasse efetivo</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONDOMINIUM DETAILS CARDS -->
+  <section class="condo-comparison-grid">
+    <!-- Box You Go -->
+    <div class="condo-box yougo">
+      <div class="condo-header">
+        <div class="condo-title-group">
+          <div class="condo-avatar">YG</div>
+          <div>
+            <div class="condo-title">You Go Vila Mariana</div>
+            <div class="condo-loc"><i class="fas fa-location-dot"></i> 34# Gestão You Go • 3 Torres</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="condo-stats-row">
+        <div class="condo-stat-item">
+          <span class="condo-stat-lbl">Repasse</span>
+          <span class="condo-stat-val condo-repasse-val" id="yg-repasse-val">R$ 0,00</span>
+        </div>
+        <div class="condo-stat-item">
+          <span class="condo-stat-lbl">Operações</span>
+          <span class="condo-stat-val" id="yg-ops-val">0</span>
+        </div>
+        <div class="condo-stat-item">
+          <span class="condo-stat-lbl">Faturamento</span>
+          <span class="condo-stat-val" id="yg-fat-val">R$ 0,00</span>
+        </div>
+      </div>
+
+      <div class="condo-cycles-bar">
+        <div class="progress-labels">
+          <span><i class="fas fa-soap" style="color: var(--wash-color);"></i> Lavagens: <strong id="yg-wash-count">0</strong></span>
+          <span><i class="fas fa-wind" style="color: var(--dry-color);"></i> Secagens: <strong id="yg-dry-count">0</strong></span>
+        </div>
+        <div class="progress-bar-wrap">
+          <div class="progress-fill-wash" id="yg-wash-bar" style="width: 50%;"></div>
+          <div class="progress-fill-dry" id="yg-dry-bar" style="width: 50%;"></div>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- CHARTS SECTION -->
+  <section class="charts-grid">
+    <!-- Evolução Histórica de Repasses -->
+    <div class="chart-card">
+      <div class="chart-header">
+        <div class="chart-title">
+          <i class="fas fa-chart-area" style="color: var(--accent-repasse);"></i>
+          Evolução Temporal do Repasse (R$) e Volume de Operações
+        </div>
+      </div>
+      <div id="chart-timeline" style="min-height: 320px;"></div>
+    </div>
+
+    <!-- Comparativo You Go vs PUQ -->
+    <div class="chart-card">
+      <div class="chart-header">
+        <div class="chart-title">
+          <i class="fas fa-chart-pie" style="color: var(--primary);"></i>
+          Lavagens x Secagens (Repasse)
+        </div>
+      </div>
+      <div id="chart-pie-condo" style="min-height: 320px;"></div>
+    </div>
+  </section>
+
+  <!-- CONSOLIDATED SUMMARY TABLE -->
+  <section class="table-card">
+    <div class="table-top-bar">
+      <div class="table-title-wrap">
+        <i class="fas fa-table-list" style="color: var(--primary);"></i>
+        <div class="table-title">Consolidado — You Go Vila Mariana</div>
+      </div>
+      <button class="btn-nav" onclick="exportConsolidadoExcel()">
+        <i class="fas fa-download"></i> Exportar Resumo
+      </button>
+    </div>
+
+    <div class="table-responsive">
+      <table class="custom-table" id="consolidated-table">
+        <thead>
+          <tr>
+            <th>Condomínio / PDV</th>
+            <th>Lavagens</th>
+            <th>Secagens</th>
+            <th>Total Operações</th>
+            <th>Taxa Unitária</th>
+            <th>Total Repasse (R$)</th>
+            <th>Faturamento Bruto (R$)</th>
+            <th>% Repasse / Fat.</th>
+          </tr>
+        </thead>
+        <tbody id="consolidated-tbody">
+          <!-- Dinâmico -->
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ANALYTIC TRANSACTIONS TABLE -->
+  <section class="table-card">
+    <div class="table-top-bar">
+      <div class="table-title-wrap">
+        <i class="fas fa-receipt" style="color: var(--accent-repasse);"></i>
+        <div class="table-title">Extrato Analítico de Transações</div>
+        <span class="table-count-badge" id="table-total-count">0 registros</span>
+      </div>
+
+      <div class="table-actions">
+        <div class="search-input-wrap">
+          <i class="fas fa-magnifying-glass"></i>
+          <input type="text" id="search-resident" class="search-input" placeholder="Buscar morador, apto ou data..." oninput="onSearchChange()">
+        </div>
+        <button class="btn-export-excel" onclick="exportAnaliticoExcel()">
+          <i class="fas fa-file-excel"></i> Exportar Excel
+        </button>
+      </div>
+    </div>
+
+    <div class="table-responsive">
+      <table class="custom-table" id="analytic-table">
+        <thead>
+          <tr>
+            <th>Data</th>
+            <th>Hora</th>
+            <th>Condomínio</th>
+            <th>Máquina</th>
+            <th>Tipo</th>
+            <th>Nome do Morador</th>
+            <th>Apartamento</th>
+            <th>Valor Operação</th>
+            <th>Repasse</th>
+            <th>Pagamento</th>
+          </tr>
+        </thead>
+        <tbody id="analytic-tbody">
+          <!-- Dinâmico -->
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Pagination -->
+    <div class="table-pagination">
+      <div class="pagination-info" id="pagination-info">
+        Mostrando 0 a 0 de 0 operações
+      </div>
+      <div class="pagination-controls" id="pagination-controls">
+        <!-- Dinâmico -->
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<script>
+// ══════════════════════════════════════════════════════
+// CONSTANTES E CONFIGURAÇÕES DE REPASSE
+// ══════════════════════════════════════════════════════
+const REPASSE_VALOR_UNITARIO = 2.00; // R$ 2,00 por operação
+
+const YOU_GO_PDV = '34# Gestão You Go Vila Mariana';
+const PUQ_PDV = '31# Gestão PUQ - Perdizes';
+
+const MATRICULAS_YOU_GO = {
+  '359476934': { torre: 'You Go 1', maquina: 'Lavadora' },
+  '707316858': { torre: 'You Go 1', maquina: 'Secadora' },
+  '359479550': { torre: 'You Go 2', maquina: 'Lavadora' },
+  '707317086': { torre: 'You Go 2', maquina: 'Secadora' },
+  '707317126': { torre: 'You Go 3', maquina: 'Lavadora' },
+  '707317098': { torre: 'You Go 3', maquina: 'Secadora' }
+};
+
+const MOLA_TIPO_MAP = {
+  '1': 'wash',
+  '5931': 'wash',
+  '6673': 'dry',
+  '7008': 'wash',
+  '7009': 'dry',
+  '7038': 'wash',
+  '8872': 'dry',
+  '11538': 'wash',
+  '11539': 'dry',
+  '11546': 'wash',
+  '11547': 'dry',
+  '11551': 'wash',
+  '11552': 'dry',
+  '11553': 'wash',
+  '11554': 'dry',
+  '19973': 'wash',
+  '25004': 'wash',
+  '25005': 'dry',
+  '25006': 'wash',
+  '25007': 'dry',
+  '25084': 'wash',
+  '25085': 'dry',
+  '25343': 'wash',
+  '25344': 'dry',
+  '25345': 'wash',
+  '25469': 'wash',
+  '25472': 'dry',
+  '25474': 'wash',
+  '26489': 'wash',
+  '26490': 'dry'
+};
+
+// ══════════════════════════════════════════════════════
+// ESTADO GLOBAL
+// ══════════════════════════════════════════════════════
+let rawTransactions = [];
+let filteredTransactions = [];
+let currentPage = 1;
+const pageSize = 20;
+
+let fpStart = null, fpEnd = null;
+let chartTimeline = null, chartPie = null;
+
+// ══════════════════════════════════════════════════════
+// CARREGAMENTO E PROCESSAMENTO DE DADOS
+// ══════════════════════════════════════════════════════
+async function initDashboard() {
+  showLoader(true);
+  try {
+    await loadDataSources();
+    initFlatpickr();
+    applyFilters();
+  } catch (err) {
+    console.error('Erro ao inicializar dashboard:', err);
+    alert('Ocorreu um erro ao carregar os dados locais: ' + err.message);
+  } finally {
+    showLoader(false);
+  }
+}
+
+function showLoader(show) {
+  const el = document.getElementById('loader');
+  if (el) {
+    if (show) el.classList.remove('hidden');
+    else el.classList.add('hidden');
+  }
+}
+
+async function loadScript(src) {
+  return new Promise((resolve, reject) => {
+    const s = document.createElement('script');
+    const isLocal = window.location.protocol === 'file:';
+    s.src = isLocal ? src : (src + '?v=' + Date.now());
+    s.onload = resolve;
+    s.onerror = reject;
+    document.head.appendChild(s);
+  });
+}
+
+async function tryLoad(varName, src) {
+  if (!window[varName]) {
+    try { await loadScript(src); } catch(e) {}
+  }
+}
+
+function parseCSV(csvText) {
+  if (!csvText) return [];
+  const lines = csvText.split('\n');
+  const result = [];
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i].trim();
+    if (!line) continue;
+    
+    // Tratamento de aspas e ponto-e-vírgula
+    const row = [];
+    let cur = '', inQuotes = false;
+    for (let c = 0; c < line.length; c++) {
+      const ch = line[c];
+      if (ch === '"') {
+        inQuotes = !inQuotes;
+      } else if (ch === ';' && !inQuotes) {
+        row.push(cur.trim());
+        cur = '';
+      } else {
+        cur += ch;
+      }
+    }
+    row.push(cur.trim());
+    result.push(row);
+  }
+  return result;
+}
+
+// ══════════════════════════════════════════════════════
+// MOTOR DE IDENTIFICAÇÃO DE MORADORES E APARTAMENTOS (YOU GO & CONDOMÍNIOS)
+// ══════════════════════════════════════════════════════
+function cleanStrResident(s) {
+  if (!s) return '';
+  return String(s)
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .trim();
+}
+
+function tokenizeResident(name) {
+  const clean = cleanStrResident(name).toLowerCase().replace(/[^a-z0-9\s]/g, ' ');
+  const stopWords = new Set(['de', 'da', 'do', 'dos', 'das', 'e', 'em', 'para', 'com']);
+  return clean.split(/\s+/).filter(t => t.length > 1 && !stopWords.has(t));
+}
+
+// Extração direta de morador e apartamento via regex estrito com word boundary
+function extractDirectUserAndApt(userRaw, nsuRaw) {
+  let user = (userRaw || '').trim();
+  let nsu = (nsuRaw || '').trim();
+  if (!user && !nsu) return { name: 'Não Identificado', apt: '' };
+
+  let morador = user;
+  let apt = '';
+
+  // 1. Verifica no campo usuário (ex: "GLAUCIO PINHEIRO DE ARAUJO apto - 17", "Silvia - Apt 87", "RODRIGO apto 163")
+  const aptRegex = /[\s\-–,.:]+(?:\b(?:apto|apt|ap|apartamento|unidade|bloco|apot)\b)[\s\-–.:#]*([a-zA-Z0-9]+(?:\s*[a-zA-Z])?)/i;
+  const match = user.match(aptRegex);
+  if (match) {
+    apt = match[1].trim();
+    morador = user.substring(0, match.index).trim();
+  } else {
+    // 2. Verifica se o usuário termina com hífen + número (ex: "Nome - 122")
+    const mHyphen = user.match(/[\s\-–,.:]+\-\s*([0-9]{1,4}[a-zA-Z]?)$/);
+    if (mHyphen) {
+      apt = mHyphen[1].trim();
+      morador = user.substring(0, mHyphen.index).trim();
+    } else {
+      // 3. Verifica no NSU (muito comum no PayBlu)
+      const nsuMatch = nsu.match(/(?:\b(?:apto|apt|ap|apartamento|unidade|bloco|apot)\b)[\s\-–.:#]*([a-zA-Z0-9]+)/i);
+      if (nsuMatch) {
+        apt = nsuMatch[1].trim();
+        morador = user;
+      }
+    }
+  }
+
+  // Limpa pontuações residuais no nome do morador
+  morador = morador.replace(/[\s\-–,.:]+$/, '').trim();
+  if (apt) {
+    apt = apt.replace(/^(?:apto|apt|ap|apartamento|unidade|bloco|apot)[\s\-–.:#]*/i, '').trim();
+  }
+
+  return {
+    name: morador || user || 'Não Identificado',
+    apt: apt || ''
+  };
+}
+
+// Dicionário e índice mestre de apartamentos (acumulado de todas as transações)
+const MASTER_RESIDENT_APT_MAP = {};      // normName -> apt (ex: "glaucio pinheiro de araujo" -> "17")
+const MASTER_RESIDENT_TOKENS = [];       // [{ tokenSet, tokens, normName, apt }]
+const KNOWN_FIXED_RESIDENTS = {
+  'tabajara tenorio dias': '94',
+  'tabajara tenorio': '94',
+  'tabajara': '94',
+  'paulino britto': '87',
+  'paulino s l bitto neto': '87',
+  'paulino s l bitto': '87',
+  'kristjan rappu': '82',
+  'kristjan': '82',
+  'thamara batista': '14',
+  'bete': '51',
+  'lpg cultura': '34',
+  'quadro phigor': '168'
+};
+
+function formatAptNumber(apt) {
+  if (!apt || apt === '–' || apt === 'Não Informado') return 'Não Informado';
+  const numOnly = String(apt).replace(/^(?:apto|apt|ap|apartamento|unidade|bloco|apot)[\s\-–.:#]*/i, '').trim();
+  return numOnly ? `apto ${numOnly}` : apt;
+}
+
+// Constrói índice global com 100% das transações de todas as fontes
+function buildMasterResidentAptIndex(allSourceRowsList) {
+  if (!Array.isArray(allSourceRowsList)) return;
+  allSourceRowsList.forEach(rows => {
+    if (!Array.isArray(rows)) return;
+    rows.forEach(r => {
+      if (r.length < 15) return;
+      const userRaw = r[19] || '';
+      const nsuRaw = r[14] || '';
+      const { name, apt } = extractDirectUserAndApt(userRaw, nsuRaw);
+      if (name && apt && name.length > 2 && name !== 'Não Identificado' && name.toLowerCase() !== 'unknown') {
+        const norm = cleanStrResident(name).toLowerCase().replace(/\s+/g, ' ').trim();
+        if (!MASTER_RESIDENT_APT_MAP[norm]) {
+          MASTER_RESIDENT_APT_MAP[norm] = apt;
+          const tokens = tokenizeResident(norm);
+          if (tokens.length > 0) {
+            MASTER_RESIDENT_TOKENS.push({
+              tokenSet: new Set(tokens),
+              tokens,
+              normName: norm,
+              apt
+            });
+          }
+        }
+      }
+    });
+  });
+  console.log(`Índice mestre de moradores You Go construído: ${Object.keys(MASTER_RESIDENT_APT_MAP).length} moradores indexados.`);
+}
+
+// Extrai nome limpo do morador e apartamento com resolução global inteligente
+function extractResidentAndApt(userRaw, nsuRaw, condoKey) {
+  let user = (userRaw || '').trim();
+  let nsu = (nsuRaw || '').trim();
+  if (!user && !nsu) {
+    return { name: 'Não Identificado', apt: 'Não Informado' };
+  }
+
+  // 1. Extração direta da linha atual
+  const direct = extractDirectUserAndApt(user, nsu);
+  if (direct.apt) {
+    return {
+      name: direct.name,
+      apt: formatAptNumber(direct.apt)
+    };
+  }
+
+  const morador = direct.name;
+  if (!morador || morador === 'Não Identificado' || morador.toLowerCase() === 'unknown' || morador.toLowerCase() === 'morador') {
+    return { name: morador || 'Não Identificado', apt: 'Não Informado' };
+  }
+
+  const norm = cleanStrResident(morador).toLowerCase().replace(/\s+/g, ' ').trim();
+
+  // 2. Consulta tabela fixa de apelidos/casos especiais
+  if (KNOWN_FIXED_RESIDENTS[norm]) {
+    return { name: morador, apt: formatAptNumber(KNOWN_FIXED_RESIDENTS[norm]) };
+  }
+
+  // 3. Match exato no índice histórico
+  if (MASTER_RESIDENT_APT_MAP[norm]) {
+    return { name: morador, apt: formatAptNumber(MASTER_RESIDENT_APT_MAP[norm]) };
+  }
+
+  // 4. Match parcial / subset de tokens (ex: "Aline Amaral" subset de "Aline Amaral Ferreira apto 114")
+  const uTokens = tokenizeResident(norm);
+  if (uTokens.length > 0) {
+    let bestApt = null;
+    let bestOverlap = 0;
+
+    for (const item of MASTER_RESIDENT_TOKENS) {
+      // É subset completo? (ex: "Michel Braga" contido em "michel sanches braga")
+      const isSubset = uTokens.every(t => item.tokenSet.has(t));
+      if (isSubset) {
+        return { name: morador, apt: formatAptNumber(item.apt) };
+      }
+
+      // Maior sobreposição de tokens (mínimo 2)
+      let overlap = 0;
+      for (const t of uTokens) {
+        if (item.tokenSet.has(t)) overlap++;
+      }
+      if (overlap >= 2 && overlap > bestOverlap) {
+        bestOverlap = overlap;
+        bestApt = item.apt;
+      }
+    }
+
+    if (bestApt) {
+      return { name: morador, apt: formatAptNumber(bestApt) };
+    }
+  }
+
+  return {
+    name: morador || 'Não Identificado',
+    apt: 'Não Informado'
+  };
+}
+
+// Detecta tipo de máquina (Lavadora / Secadora)
+function detectMachineType(row) {
+  const matr = (row[21] || '').trim();
+  if (MATRICULAS_YOU_GO[matr]) {
+    return {
+      type: MATRICULAS_YOU_GO[matr].maquina,
+      torre: MATRICULAS_YOU_GO[matr].torre,
+      isWash: MATRICULAS_YOU_GO[matr].maquina === 'Lavadora'
+    };
+  }
+
+  const prod = (row[5] || '').toUpperCase();
+  if (prod.includes('LAV')) return { type: 'Lavadora', torre: '', isWash: true };
+  if (prod.includes('SEC')) return { type: 'Secadora', torre: '', isWash: false };
+
+  const mola = (row[6] || '').trim().toUpperCase();
+  const molaCode = mola.split(' ')[0].trim();
+  if (MOLA_TIPO_MAP[molaCode] === 'wash') return { type: 'Lavadora', torre: '', isWash: true };
+  if (MOLA_TIPO_MAP[molaCode] === 'dry') return { type: 'Secadora', torre: '', isWash: false };
+  if (mola.includes('LAVA')) return { type: 'Lavadora', torre: '', isWash: true };
+  if (mola.includes('SECA')) return { type: 'Secadora', torre: '', isWash: false };
+
+  return { type: 'Lavadora', torre: '', isWash: true }; // Padrão seguro
+}
+
+function parseNumber(val) {
+  if (!val) return 0;
+  if (typeof val === 'number') return val;
+  const clean = String(val).replace('R$', '').replace(/\s/g, '').replace('.', '').replace(',', '.');
+  const n = parseFloat(clean);
+  return isNaN(n) ? 0 : n;
+}
+
+function parseDateBR(dateStr, timeStr) {
+  if (!dateStr) return null;
+  const parts = dateStr.split('/');
+  if (parts.length !== 3) return null;
+  const d = parseInt(parts[0], 10);
+  const m = parseInt(parts[1], 10) - 1;
+  const y = parseInt(parts[2], 10);
+
+  let hh = 0, mm = 0, ss = 0;
+  if (timeStr) {
+    const tparts = timeStr.split(':');
+    if (tparts.length >= 2) {
+      hh = parseInt(tparts[0], 10) || 0;
+      mm = parseInt(tparts[1], 10) || 0;
+      ss = parseInt(tparts[2], 10) || 0;
+    }
+  }
+  return new Date(y, m, d, hh, mm, ss);
+}
+
+async function loadDataSources() {
+  rawTransactions = [];
+  const allSourceSets = [];
+
+  // Mesmas fontes do relatório de repasse: PayBlu, VendTEF, VMPay e SQInsights (filtradas só para You Go)
+  await tryLoad('LAVAI_PAYBLU_DATA', 'payblu_local.js');
+  let paybluRows = [];
+  if (window.LAVAI_PAYBLU_DATA) {
+    paybluRows = parseCSV(window.LAVAI_PAYBLU_DATA);
+    allSourceSets.push(paybluRows);
+  }
+
+  await tryLoad('LAVAI_VENDTEF_DATA', 'vendtef_local.js');
+  let vendtefRows = [];
+  if (window.LAVAI_VENDTEF_DATA) { vendtefRows = parseCSV(window.LAVAI_VENDTEF_DATA); allSourceSets.push(vendtefRows); }
+  await tryLoad('LAVAI_VMPAY_DATA', 'vmpay_local.js');
+  let vmpayRows = [];
+  if (window.LAVAI_VMPAY_DATA) { vmpayRows = parseCSV(window.LAVAI_VMPAY_DATA); allSourceSets.push(vmpayRows); }
+  await tryLoad('LAVAI_SQI_DATA', 'sqi_local.js');
+  let sqiRows = [];
+  if (window.LAVAI_SQI_DATA) { sqiRows = parseCSV(window.LAVAI_SQI_DATA); allSourceSets.push(sqiRows); }
+
+  // Constrói índice mestre global de apartamentos ANTES de processar as transações
+  buildMasterResidentAptIndex(allSourceSets);
+
+  // Processa as linhas de cada fonte
+  if (paybluRows.length) processSourceRows(paybluRows, 'PayBlu');
+  if (vendtefRows.length) processSourceRows(vendtefRows, 'VendTEF');
+  if (vmpayRows.length) processSourceRows(vmpayRows, 'VMPay');
+  if (sqiRows.length) processSourceRows(sqiRows, 'SQInsights');
+
+  // Ordena por data decrescente
+  rawTransactions.sort((a, b) => b.timestamp - a.timestamp);
+  console.log(`Carregadas ${rawTransactions.length} transações do You Go Vila Mariana.`);
+}
+
+function processSourceRows(rows, sourceName) {
+  // Ignora cabeçalho
+  for (let i = 0; i < rows.length; i++) {
+    const r = rows[i];
+    if (r.length < 12) continue;
+    if (r[0] === 'Cliente' || r[1] === 'Máquina') continue;
+
+    const cliente = (r[0] || '').toLowerCase();
+    const maquina = (r[1] || '').toLowerCase();
+    const matricula = (r[21] || '').trim();
+    const mola = (r[6] || '').trim();
+
+    const dataStr = r[11] || '';
+    const horaStr = r[12] || '';
+    const dt = parseDateBR(dataStr, horaStr);
+    if (!dt) continue;
+
+    let condoKey = null;
+    let condoNome = '';
+
+    const isAfterOrOn23Sep2026 = dt >= new Date(2026, 8, 23); // 23/09/2026
+
+    // Verifica You Go
+    if (
+      cliente.includes('you go') || 
+      maquina.includes('you go') || 
+      maquina.includes('34#') ||
+      MATRICULAS_YOU_GO[matricula] ||
+      mola.includes('25345') ||
+      (mola.includes('25469') && isAfterOrOn23Sep2026)
+    ) {
+      condoKey = 'YOU_GO';
+      condoNome = 'You Go Vila Mariana';
+    }
+    if (!condoKey) continue;
+
+    const maqInfo = detectMachineType(r);
+    const residentInfo = extractResidentAndApt(r[19], r[14], condoKey);
+    const valor = parseNumber(r[9] || r[7] || 0);
+    const repasse = valor > 0 ? REPASSE_VALOR_UNITARIO : 0;
+    const pagamento = r[4] || r[16] || 'TEF';
+
+    rawTransactions.push({
+      id: `${sourceName}-${i}`,
+      source: sourceName,
+      condoKey,
+      condoNome,
+      dataStr,
+      horaStr,
+      dateObj: dt,
+      timestamp: dt.getTime(),
+      year: dt.getFullYear(),
+      month: dt.getMonth() + 1,
+      tipoMaquina: maqInfo.type,
+      isWash: maqInfo.isWash,
+      torre: maqInfo.torre || 'You Go',
+      morador: residentInfo.name,
+      apartamento: residentInfo.apt,
+      valor,
+      repasse,
+      pagamento,
+      rawRow: r
+    });
+  }
+}
+
+// ══════════════════════════════════════════════════════
+// FILTROS
+// ══════════════════════════════════════════════════════
+function initFlatpickr() {
+  const commonCfg = {
+    dateFormat: "d/m/Y",
+    locale: "pt",
+    allowInput: true,
+    onChange: function() {
+      clearActivePills();
+      applyFilters();
+    }
+  };
+  fpStart = flatpickr("#date-start", commonCfg);
+  fpEnd = flatpickr("#date-end", commonCfg);
+}
+
+function clearActivePills() {
+  document.querySelectorAll('.btn-pill').forEach(b => b.classList.remove('active'));
+}
+
+function setQuickPeriod(period) {
+  clearActivePills();
+  const btn = document.querySelector(`.btn-pill[data-period="${period}"]`);
+  if (btn) btn.classList.add('active');
+
+  const now = new Date();
+  const pad = n => String(n).padStart(2, '0');
+  const fmt = d => `${pad(d.getDate())}/${pad(d.getMonth()+1)}/${d.getFullYear()}`;
+
+  if (period === 'all') {
+    fpStart.clear();
+    fpEnd.clear();
+  } else if (period === 'today') {
+    fpStart.setDate(now);
+    fpEnd.setDate(now);
+  } else if (period === 'yesterday') {
+    const y = new Date();
+    y.setDate(y.getDate() - 1);
+    fpStart.setDate(y);
+    fpEnd.setDate(y);
+  } else if (period === '7days') {
+    const s = new Date();
+    s.setDate(s.getDate() - 6);
+    fpStart.setDate(s);
+    fpEnd.setDate(now);
+  } else if (period === 'this_month') {
+    const s = new Date(now.getFullYear(), now.getMonth(), 1);
+    const e = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+    fpStart.setDate(s);
+    fpEnd.setDate(e);
+  } else if (period === 'last_month') {
+    const s = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+    const e = new Date(now.getFullYear(), now.getMonth(), 0);
+    fpStart.setDate(s);
+    fpEnd.setDate(e);
+  } else if (period === 'year_2026') {
+    fpStart.setDate(new Date(2026, 0, 1));
+    fpEnd.setDate(new Date(2026, 11, 31));
+  } else if (period === 'year_2025') {
+    fpStart.setDate(new Date(2025, 0, 1));
+    fpEnd.setDate(new Date(2025, 11, 31));
+  }
+
+  applyFilters();
+}
+
+function resetFilters() {
+  document.getElementById('filter-maq-type').value = 'all';
+  document.getElementById('search-resident').value = '';
+  setQuickPeriod('all');
+}
+
+function applyFilters() {
+  const condoVal = 'all';
+  const maqVal = document.getElementById('filter-maq-type').value;
+  const searchVal = (document.getElementById('search-resident').value || '').toLowerCase().trim();
+
+  const startDate = fpStart && fpStart.selectedDates.length ? fpStart.selectedDates[0] : null;
+  const endDate = fpEnd && fpEnd.selectedDates.length ? fpEnd.selectedDates[0] : null;
+
+  if (startDate) startDate.setHours(0, 0, 0, 0);
+  if (endDate) endDate.setHours(23, 59, 59, 999);
+
+  filteredTransactions = rawTransactions.filter(item => {
+    // Filtro Condomínio
+    if (condoVal !== 'all' && item.condoKey !== condoVal) return false;
+
+    // Filtro Tipo de Máquina
+    if (maqVal === 'wash' && !item.isWash) return false;
+    if (maqVal === 'dry' && item.isWash) return false;
+
+    // Filtro Data
+    if (startDate && item.dateObj < startDate) return false;
+    if (endDate && item.dateObj > endDate) return false;
+
+    // Filtro Busca textual
+    if (searchVal) {
+      const matchName = item.morador.toLowerCase().includes(searchVal);
+      const matchApt = item.apartamento.toLowerCase().includes(searchVal);
+      const matchDate = item.dataStr.includes(searchVal);
+      const matchCondo = item.condoNome.toLowerCase().includes(searchVal);
+      if (!matchName && !matchApt && !matchDate && !matchCondo) return false;
+    }
+
+    return true;
+  });
+
+  currentPage = 1;
+  updateDashboardUI();
+}
+
+function onSearchChange() {
+  applyFilters();
+}
+
+// ══════════════════════════════════════════════════════
+// ATUALIZAÇÃO DA INTERFACE E CARDS
+// ══════════════════════════════════════════════════════
+function fmtBRL(num) {
+  return (num || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+}
+
+function updateDashboardUI() {
+  const totalOps = filteredTransactions.length;
+  const repasseTotal = filteredTransactions.reduce((acc, cur) => acc + (cur.valor > 0 ? REPASSE_VALOR_UNITARIO : 0), 0);
+  const faturamentoTotal = filteredTransactions.reduce((acc, cur) => acc + cur.valor, 0);
+
+  // Totais por Condomínio
+  const ygItems = filteredTransactions.filter(r => r.condoKey === 'YOU_GO');
+  const ygOps = ygItems.length;
+  const ygRepasse = ygItems.reduce((acc, cur) => acc + (cur.valor > 0 ? REPASSE_VALOR_UNITARIO : 0), 0);
+  const ygFat = ygItems.reduce((acc, cur) => acc + cur.valor, 0);
+  const ygWash = ygItems.filter(r => r.isWash).length;
+  const ygDry = ygOps - ygWash;
+
+  // KPI Cards
+  document.getElementById('kpi-repasse-total').textContent = fmtBRL(repasseTotal);
+  document.getElementById('kpi-total-operacoes').textContent = totalOps.toLocaleString('pt-BR');
+  document.getElementById('kpi-repasse-yougo').textContent = fmtBRL(ygRepasse);
+  document.getElementById('kpi-ops-yougo').textContent = `${ygOps.toLocaleString('pt-BR')} ciclos realizados`;
+  document.getElementById('kpi-faturamento-total').textContent = fmtBRL(faturamentoTotal);
+
+  const pctRepasse = faturamentoTotal > 0 ? ((repasseTotal / faturamentoTotal) * 100).toFixed(1) : '0';
+  document.getElementById('kpi-pct-repasse').textContent = `${pctRepasse}% de repasse sobre a receita bruta`;
+
+  // Box You Go
+  document.getElementById('yg-repasse-val').textContent = fmtBRL(ygRepasse);
+  document.getElementById('yg-ops-val').textContent = ygOps.toLocaleString('pt-BR');
+  document.getElementById('yg-fat-val').textContent = fmtBRL(ygFat);
+  document.getElementById('yg-wash-count').textContent = ygWash.toLocaleString('pt-BR');
+  document.getElementById('yg-dry-count').textContent = ygDry.toLocaleString('pt-BR');
+  const ygWashPct = ygOps > 0 ? (ygWash / ygOps) * 100 : 50;
+  document.getElementById('yg-wash-bar').style.width = `${ygWashPct}%`;
+  document.getElementById('yg-dry-bar').style.width = `${100 - ygWashPct}%`;
+
+  renderConsolidatedTable({ ygOps, ygRepasse, ygFat, ygWash, ygDry });
+
+  renderAnalyticTable();
+  renderCharts();
+}
+
+// ══════════════════════════════════════════════════════
+// TABELA CONSOLIDADA
+// ══════════════════════════════════════════════════════
+function renderConsolidatedTable(d) {
+  const tbody = document.getElementById('consolidated-tbody');
+  if (!tbody) return;
+
+  const ygPct = d.ygFat > 0 ? ((d.ygRepasse / d.ygFat) * 100).toFixed(1) + '%' : '–';
+
+  tbody.innerHTML = `
+    <tr>
+      <td><span class="badge-condo yougo"><i class="fas fa-building"></i> You Go Vila Mariana (34#)</span></td>
+      <td><strong>${d.ygWash.toLocaleString('pt-BR')}</strong></td>
+      <td><strong>${d.ygDry.toLocaleString('pt-BR')}</strong></td>
+      <td><strong>${d.ygOps.toLocaleString('pt-BR')}</strong></td>
+      <td>R$ 2,00</td>
+      <td><span class="badge-repasse-val">${fmtBRL(d.ygRepasse)}</span></td>
+      <td>${fmtBRL(d.ygFat)}</td>
+      <td><strong style="color:#4f46e5">${ygPct}</strong></td>
+    </tr>
+  `;
+}
+
+// ══════════════════════════════════════════════════════
+// TABELA ANALÍTICA E PAGINAÇÃO
+// ══════════════════════════════════════════════════════
+function renderAnalyticTable() {
+  const tbody = document.getElementById('analytic-tbody');
+  const countBadge = document.getElementById('table-total-count');
+  if (!tbody) return;
+
+  const total = filteredTransactions.length;
+  countBadge.textContent = `${total.toLocaleString('pt-BR')} registros`;
+
+  if (total === 0) {
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="10" style="text-align: center; padding: 40px 20px; color: var(--text-dim);">
+          <i class="fas fa-inbox" style="font-size: 32px; margin-bottom: 10px; display: block;"></i>
+          Nenhuma transação encontrada para os filtros selecionados.
+        </td>
+      </tr>
+    `;
+    renderPagination(0);
+    return;
+  }
+
+  const totalPages = Math.ceil(total / pageSize);
+  if (currentPage > totalPages) currentPage = totalPages;
+  if (currentPage < 1) currentPage = 1;
+
+  const startIndex = (currentPage - 1) * pageSize;
+  const endIndex = Math.min(startIndex + pageSize, total);
+  const pageItems = filteredTransactions.slice(startIndex, endIndex);
+
+  let html = '';
+  pageItems.forEach(item => {
+    const isWash = item.isWash;
+    const badgeMaq = isWash
+      ? `<span class="badge-machine badge-wash"><i class="fas fa-soap"></i> Lavadora</span>`
+      : `<span class="badge-machine badge-dry"><i class="fas fa-wind"></i> Secadora</span>`;
+
+    const badgeCondo = `<span class="badge-condo yougo"><i class="fas fa-building"></i> You Go</span>`;
+
+    const aptoDisplay = item.apartamento && item.apartamento !== 'Não Informado'
+      ? `<span class="cell-apto">${item.apartamento}</span>`
+      : `<span style="color: var(--text-dim); font-size: 11px;">–</span>`;
+
+    html += `
+      <tr>
+        <td><strong>${item.dataStr}</strong></td>
+        <td style="color: var(--text-muted);">${item.horaStr}</td>
+        <td>${badgeCondo}</td>
+        <td><span style="font-size: 12px; color: var(--text-muted);">${item.torre}</span></td>
+        <td>${badgeMaq}</td>
+        <td><span class="cell-morador">${item.morador}</span></td>
+        <td>${aptoDisplay}</td>
+        <td style="font-family: 'JetBrains Mono', monospace;">${fmtBRL(item.valor)}</td>
+        <td><span class="badge-repasse-val">${fmtBRL(item.repasse)}</span></td>
+        <td><span style="font-size: 11px; color: var(--text-muted);">${item.pagamento}</span></td>
+      </tr>
+    `;
+  });
+
+  tbody.innerHTML = html;
+  renderPagination(total);
+}
+
+function renderPagination(total) {
+  const info = document.getElementById('pagination-info');
+  const controls = document.getElementById('pagination-controls');
+  if (!info || !controls) return;
+
+  if (total === 0) {
+    info.textContent = 'Nenhum registro para exibir';
+    controls.innerHTML = '';
+    return;
+  }
+
+  const totalPages = Math.ceil(total / pageSize);
+  const start = (currentPage - 1) * pageSize + 1;
+  const end = Math.min(currentPage * pageSize, total);
+
+  info.textContent = `Mostrando ${start.toLocaleString('pt-BR')} a ${end.toLocaleString('pt-BR')} de ${total.toLocaleString('pt-BR')} operações`;
+
+  let btns = `
+    <button class="btn-page" onclick="goToPage(1)" ${currentPage === 1 ? 'disabled' : ''} title="Primeira página">
+      <i class="fas fa-angles-left"></i>
+    </button>
+    <button class="btn-page" onclick="goToPage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''} title="Anterior">
+      <i class="fas fa-angle-left"></i>
+    </button>
+  `;
+
+  // Janela de páginas
+  let pStart = Math.max(1, currentPage - 2);
+  let pEnd = Math.min(totalPages, currentPage + 2);
+
+  for (let p = pStart; p <= pEnd; p++) {
+    btns += `
+      <button class="btn-page ${p === currentPage ? 'active' : ''}" onclick="goToPage(${p})">
+        ${p}
+      </button>
+    `;
+  }
+
+  btns += `
+    <button class="btn-page" onclick="goToPage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''} title="Próxima">
+      <i class="fas fa-angle-right"></i>
+    </button>
+    <button class="btn-page" onclick="goToPage(${totalPages})" ${currentPage === totalPages ? 'disabled' : ''} title="Última página">
+      <i class="fas fa-angles-right"></i>
+    </button>
+  `;
+
+  controls.innerHTML = btns;
+}
+
+function goToPage(page) {
+  currentPage = page;
+  renderAnalyticTable();
+  const tableSection = document.getElementById('analytic-table');
+  if (tableSection) {
+    tableSection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+}
+
+// ══════════════════════════════════════════════════════
+// GRÁFICOS APEXCHARTS
+// ══════════════════════════════════════════════════════
+function renderCharts() {
+  renderTimelineChart();
+  renderPieChart();
+}
+
+function renderTimelineChart() {
+  const el = document.getElementById('chart-timeline');
+  if (!el) return;
+
+  // Agrupa por Mês/Ano ou Dia dependendo do volume
+  const groupMap = {};
+  filteredTransactions.forEach(item => {
+    const key = `${item.year}-${String(item.month).padStart(2, '0')}`;
+    if (!groupMap[key]) {
+      groupMap[key] = {
+        label: `${String(item.month).padStart(2, '0')}/${item.year}`,
+        timestamp: new Date(item.year, item.month - 1, 1).getTime(),
+        yougoRepasse: 0,
+        totalRepasse: 0,
+        totalOps: 0
+      };
+    }
+    const val = item.repasse;
+    groupMap[key].yougoRepasse += val;
+    groupMap[key].totalRepasse += val;
+    groupMap[key].totalOps += 1;
+  });
+
+  const sortedKeys = Object.keys(groupMap).sort((a, b) => groupMap[a].timestamp - groupMap[b].timestamp);
+  const categories = sortedKeys.map(k => groupMap[k].label);
+  const dataYG = sortedKeys.map(k => groupMap[k].yougoRepasse);
+  const dataOps = sortedKeys.map(k => groupMap[k].totalOps);
+
+  const options = {
+    series: [
+      { name: 'Repasse You Go (R$)', data: dataYG, color: '#6366f1' }
+    ],
+    chart: {
+      type: 'bar',
+      height: 320,
+      stacked: false,
+      toolbar: { show: false },
+      background: 'transparent'
+    },
+    theme: { mode: 'light' },
+    plotOptions: {
+      bar: {
+        horizontal: false,
+        borderRadius: 4,
+        columnWidth: '45%'
+      }
+    },
+    dataLabels: { enabled: false },
+    stroke: { width: 1, colors: ['transparent'] },
+    xaxis: {
+      categories,
+      labels: { style: { colors: '#64748b', fontSize: '11px' } },
+      axisBorder: { color: 'rgba(15,23,42,0.12)' }
+    },
+    yaxis: {
+      labels: {
+        style: { colors: '#64748b' },
+        formatter: val => fmtBRL(val)
+      }
+    },
+    legend: {
+      position: 'top',
+      horizontalAlign: 'right',
+      labels: { colors: '#334155' }
+    },
+    tooltip: {
+      theme: 'light',
+      y: { formatter: val => fmtBRL(val) }
+    },
+    grid: {
+      borderColor: 'rgba(15,23,42,0.08)',
+      strokeDashArray: 4
+    }
+  };
+
+  if (chartTimeline) chartTimeline.destroy();
+  chartTimeline = new ApexCharts(el, options);
+  chartTimeline.render();
+}
+
+function renderPieChart() {
+  const el = document.getElementById('chart-pie-condo');
+  if (!el) return;
+
+  const washOps = filteredTransactions.filter(r => r.isWash).length;
+  const dryOps = filteredTransactions.length - washOps;
+  const totalRepasse = filteredTransactions.reduce((s, r) => s + r.repasse, 0);
+
+  const options = {
+    series: [washOps, dryOps],
+    labels: ['Lavagens', 'Secagens'],
+    colors: ['#3b82f6', '#ec4899'],
+    chart: {
+      type: 'donut',
+      height: 320,
+      background: 'transparent'
+    },
+    theme: { mode: 'light' },
+    plotOptions: {
+      pie: {
+        donut: {
+          size: '65%',
+          labels: {
+            show: true,
+            total: {
+              show: true,
+              label: 'Operações',
+              color: '#64748b',
+              formatter: () => (washOps + dryOps).toLocaleString('pt-BR')
+            }
+          }
+        }
+      }
+    },
+    dataLabels: { enabled: true },
+    legend: {
+      position: 'bottom',
+      labels: { colors: '#334155' }
+    },
+    tooltip: {
+      theme: 'light',
+      y: { formatter: val => val.toLocaleString('pt-BR') + ' ciclos' }
+    }
+  };
+
+  if (chartPie) chartPie.destroy();
+  chartPie = new ApexCharts(el, options);
+  chartPie.render();
+}
+
+// ══════════════════════════════════════════════════════
+// EXPORTAÇÃO EXCEL (.XLSX)
+// ══════════════════════════════════════════════════════
+function exportAnaliticoExcel() {
+  if (!filteredTransactions || filteredTransactions.length === 0) {
+    alert('Não há dados para exportar no período selecionado.');
+    return;
+  }
+
+  showLoader(true);
+
+  setTimeout(() => {
+    try {
+      // Cabeçalhos exatos conforme solicitado pelo usuário:
+      // Data, Hora, Condomínio, Tipo de Máquina, Nome do Morador, Apartamento, Valor da Operação, Repasse, Forma de Pagamento
+      const headers = [
+        'Data',
+        'Hora',
+        'Condomínio / PDV',
+        'Torre / Máquina',
+        'Tipo de Máquina',
+        'Nome do Morador',
+        'Apartamento',
+        'Valor da Operação (R$)',
+        'Valor Repasse (R$)',
+        'Forma de Pagamento'
+      ];
+
+      const dataRows = filteredTransactions.map(item => [
+        item.dataStr,
+        item.horaStr,
+        item.condoNome,
+        item.torre,
+        item.tipoMaquina,
+        item.morador,
+        item.apartamento,
+        item.valor,
+        item.repasse,
+        item.pagamento
+      ]);
+
+      const aoa = [headers, ...dataRows];
+
+      const ws = XLSX.utils.aoa_to_sheet(aoa);
+
+      // Largura de colunas personalizadas
+      ws['!cols'] = [
+        { wch: 12 }, // Data
+        { wch: 10 }, // Hora
+        { wch: 28 }, // Condomínio
+        { wch: 16 }, // Torre
+        { wch: 16 }, // Tipo
+        { wch: 34 }, // Nome Morador
+        { wch: 16 }, // Apartamento
+        { wch: 22 }, // Valor Operação
+        { wch: 18 }, // Valor Repasse
+        { wch: 20 }  // Pagamento
+      ];
+
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, "Extrato Analítico");
+
+      // Adiciona aba de Resumo Consolidado
+      const ygOps = filteredTransactions.length;
+      const ygRepasse = filteredTransactions.reduce((s, r) => s + r.repasse, 0);
+      const ygFat = filteredTransactions.reduce((s, r) => s + r.valor, 0);
+
+      const resumoAoa = [
+        ['RESUMO DE REPASSE — YOU GO VILA MARIANA (R$ 2,00 POR OPERAÇÃO PAGA)'],
+        ['Gerado em:', new Date().toLocaleString('pt-BR')],
+        [],
+        ['Condomínio', 'Total Operações', 'Taxa Unitária (R$)', 'Total Repasse (R$)', 'Faturamento Bruto (R$)', '% Repasse / Fat'],
+        ['You Go Vila Mariana (34#)', ygOps, 2.00, ygRepasse, ygFat, ygFat > 0 ? (ygRepasse / ygFat) : 0],
+      ];
+
+      const wsResumo = XLSX.utils.aoa_to_sheet(resumoAoa);
+      wsResumo['!cols'] = [
+        { wch: 28 },
+        { wch: 16 },
+        { wch: 18 },
+        { wch: 18 },
+        { wch: 22 },
+        { wch: 16 }
+      ];
+      XLSX.utils.book_append_sheet(wb, wsResumo, "Resumo Consolidado");
+
+      const todayStr = new Date().toISOString().slice(0, 10);
+      XLSX.writeFile(wb, `repasse_yougo_vila_mariana_${todayStr}.xlsx`);
+    } catch(err) {
+      console.error('Erro ao gerar Excel:', err);
+      alert('Erro ao exportar Excel: ' + err.message);
+    } finally {
+      showLoader(false);
+    }
+  }, 100);
+}
+
+function exportConsolidadoExcel() {
+  const table = document.getElementById('consolidated-table');
+  if (!table) return;
+  const wb = XLSX.utils.table_to_book(table, { sheet: "Consolidado Repasse" });
+  const todayStr = new Date().toISOString().slice(0, 10);
+  XLSX.writeFile(wb, `resumo_repasse_yougo_${todayStr}.xlsx`);
+}
+
+// Inicia aplicação
+const GATE_HASH = '12b9620940388d15a269ec0eac4f997cd8c1cf910a1a007082f58ed7dbaf112f';
+const GATE_KEY = 'lavai_yougo_repasse_acesso';
+
+function sha256Hex(str) {
+  // implementação compacta (funciona também em file://)
+  const K = [0x428a2f98,0x71374491,0xb5c0fbcf,0xe9b5dba5,0x3956c25b,0x59f111f1,0x923f82a4,0xab1c5ed5,0xd807aa98,0x12835b01,0x243185be,0x550c7dc3,0x72be5d74,0x80deb1fe,0x9bdc06a7,0xc19bf174,0xe49b69c1,0xefbe4786,0x0fc19dc6,0x240ca1cc,0x2de92c6f,0x4a7484aa,0x5cb0a9dc,0x76f988da,0x983e5152,0xa831c66d,0xb00327c8,0xbf597fc7,0xc6e00bf3,0xd5a79147,0x06ca6351,0x14292967,0x27b70a85,0x2e1b2138,0x4d2c6dfc,0x53380d13,0x650a7354,0x766a0abb,0x81c2c92e,0x92722c85,0xa2bfe8a1,0xa81a664b,0xc24b8b70,0xc76c51a3,0xd192e819,0xd6990624,0xf40e3585,0x106aa070,0x19a4c116,0x1e376c08,0x2748774c,0x34b0bcb5,0x391c0cb3,0x4ed8aa4a,0x5b9cca4f,0x682e6ff3,0x748f82ee,0x78a5636f,0x84c87814,0x8cc70208,0x90befffa,0xa4506ceb,0xbef9a3f7,0xc67178f2];
+  const bytes = new TextEncoder().encode(str);
+  const l = bytes.length, nBlocks = ((l + 9 + 63) >> 6);
+  const w = new Uint32Array(nBlocks * 16);
+  for (let i = 0; i < l; i++) w[i >> 2] |= bytes[i] << (24 - (i % 4) * 8);
+  w[l >> 2] |= 0x80 << (24 - (l % 4) * 8);
+  w[nBlocks * 16 - 1] = l * 8;
+  let h = [0x6a09e667,0xbb67ae85,0x3c6ef372,0xa54ff53a,0x510e527f,0x9b05688c,0x1f83d9ab,0x5be0cd19];
+  const r = (x, n) => (x >>> n) | (x << (32 - n));
+  const m = new Uint32Array(64);
+  for (let b = 0; b < nBlocks; b++) {
+    for (let t = 0; t < 16; t++) m[t] = w[b * 16 + t];
+    for (let t = 16; t < 64; t++) {
+      const s0 = r(m[t-15], 7) ^ r(m[t-15], 18) ^ (m[t-15] >>> 3);
+      const s1 = r(m[t-2], 17) ^ r(m[t-2], 19) ^ (m[t-2] >>> 10);
+      m[t] = (m[t-16] + s0 + m[t-7] + s1) | 0;
+    }
+    let [a, bb, c, d, e, f, g, hh] = h;
+    for (let t = 0; t < 64; t++) {
+      const t1 = (hh + (r(e, 6) ^ r(e, 11) ^ r(e, 25)) + ((e & f) ^ (~e & g)) + K[t] + m[t]) | 0;
+      const t2 = ((r(a, 2) ^ r(a, 13) ^ r(a, 22)) + ((a & bb) ^ (a & c) ^ (bb & c))) | 0;
+      hh = g; g = f; f = e; e = (d + t1) | 0; d = c; c = bb; bb = a; a = (t1 + t2) | 0;
+    }
+    h = [h[0]+a, h[1]+bb, h[2]+c, h[3]+d, h[4]+e, h[5]+f, h[6]+g, h[7]+hh].map(x => x | 0);
+  }
+  return h.map(x => (x >>> 0).toString(16).padStart(8, '0')).join('');
+}
+
+let dashboardIniciado = false;
+function liberarAcesso() {
+  document.body.classList.remove('locked');
+  document.getElementById('gate').classList.add('hide');
+  if (!dashboardIniciado) { dashboardIniciado = true; initDashboard(); }
+}
+
+function initGate() {
+  try { if (sessionStorage.getItem(GATE_KEY) === GATE_HASH) { liberarAcesso(); return; } } catch (e) {}
+  const form = document.getElementById('gate-form');
+  const input = document.getElementById('gate-pass');
+  const msg = document.getElementById('gate-msg');
+  const card = document.getElementById('gate-card');
+  document.getElementById('gate-eye').addEventListener('click', () => {
+    const show = input.type === 'password';
+    input.type = show ? 'text' : 'password';
+    document.querySelector('#gate-eye i').className = show ? 'fas fa-eye-slash' : 'fas fa-eye';
+    input.focus();
+  });
+  input.addEventListener('input', () => { input.classList.remove('err'); msg.textContent = ''; });
+  form.addEventListener('submit', ev => {
+    ev.preventDefault();
+    if (sha256Hex(input.value) === GATE_HASH) {
+      try { sessionStorage.setItem(GATE_KEY, GATE_HASH); } catch (e) {}
+      liberarAcesso();
+    } else {
+      input.classList.add('err');
+      msg.textContent = 'Senha incorreta. Tente novamente.';
+      card.classList.remove('shake'); void card.offsetWidth; card.classList.add('shake');
+      input.select();
+    }
+  });
+  setTimeout(() => input.focus(), 50);
+}
+
+document.addEventListener('DOMContentLoaded', initGate);
+</script>
+</body>
+</html>
